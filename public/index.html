@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sweat & Tonic — User Journey Map</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+  :root {
+    --bg: #0a0a0a;
+    --surface: #141414;
+    --surface2: #1e1e1e;
+    --border: #2a2a2a;
+    --text: #e8e8e8;
+    --text-muted: #888;
+    --accent: #f5a623;
+    --accent-dim: rgba(245,166,35,0.15);
+    --sweat: #ff6b4a;
+    --recover: #4ac7ff;
+    --connect: #8b5cf6;
+    --success: #34d399;
+    --warning: #fbbf24;
+    --danger: #f87171;
+    --phase-activate: #ff6b4a;
+    --phase-onboard: #f5a623;
+    --phase-engage: #34d399;
+    --phase-reflect: #4ac7ff;
+    --phase-optimize: #8b5cf6;
+    --phase-retain: #ec4899;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+  }
+
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(10,10,10,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .header h1 {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+  }
+  .header h1 span { color: var(--accent); }
+  .header-badge {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--accent);
+    background: var(--accent-dim);
+    padding: 4px 10px;
+    border-radius: 12px;
+  }
+  .header-controls {
+    display: flex;
+    gap: 8px;
+  }
+  .filter-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .filter-btn:hover, .filter-btn.active {
+    color: var(--text);
+    border-color: var(--accent);
+    background: var(--accent-dim);
+  }
+
+  .stats-bar {
+    display: flex;
+    gap: 24px;
+    padding: 16px 32px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+  }
+  .stat-item {
+    text-align: center;
+    min-width: 100px;
+  }
+  .stat-item .stat-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .stat-item .stat-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  .journey-container {
+    padding: 24px 32px;
+    overflow-x: auto;
+  }
+
+  .journey-grid {
+    display: grid;
+    grid-template-columns: 160px repeat(6, minmax(240px, 1fr));
+    gap: 0;
+    min-width: 1700px;
+  }
+
+  .row-label {
+    padding: 16px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: flex-start;
+    border-right: 1px solid var(--border);
+    position: sticky;
+    left: 0;
+    background: var(--bg);
+    z-index: 10;
+  }
+  .row-label .label-icon {
+    margin-right: 8px;
+    font-size: 14px;
+  }
+
+  .phase-header {
+    padding: 16px;
+    text-align: center;
+    border-bottom: 3px solid;
+    position: relative;
+  }
+  .phase-header h3 {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+  }
+  .phase-header .phase-desc {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+  .phase-header .phase-flows {
+    font-size: 10px;
+    margin-top: 6px;
+    padding: 3px 8px;
+    border-radius: 10px;
+    display: inline-block;
+  }
+
+  .cell {
+    padding: 12px;
+    border-bottom: 1px solid var(--border);
+    border-right: 1px solid rgba(42,42,42,0.4);
+    min-height: 80px;
+  }
+
+  .touchpoint {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .touchpoint:hover {
+    border-color: var(--accent);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  }
+  .touchpoint .tp-name {
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .touchpoint .tp-screen {
+    font-size: 10px;
+    color: var(--text-muted);
+    font-family: 'SF Mono', monospace;
+  }
+  .touchpoint .tp-flow-tag {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-size: 9px;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 6px;
+    background: var(--surface2);
+    color: var(--text-muted);
+  }
+
+  .action-item {
+    font-size: 11px;
+    color: var(--text-muted);
+    padding: 6px 10px;
+    background: var(--surface);
+    border-radius: 6px;
+    margin-bottom: 4px;
+    border-left: 2px solid var(--border);
+  }
+
+  .emotion-track {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 0;
+  }
+  .emotion-dot {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+  .emotion-label {
+    font-size: 10px;
+    color: var(--text-muted);
+  }
+
+  .pain-point {
+    background: rgba(248,113,113,0.1);
+    border: 1px solid rgba(248,113,113,0.2);
+    border-radius: 8px;
+    padding: 8px 10px;
+    margin-bottom: 6px;
+    font-size: 11px;
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  .pain-point .pain-icon {
+    color: var(--danger);
+    flex-shrink: 0;
+    font-size: 12px;
+  }
+
+  .opportunity {
+    background: rgba(52,211,153,0.1);
+    border: 1px solid rgba(52,211,153,0.2);
+    border-radius: 8px;
+    padding: 8px 10px;
+    margin-bottom: 6px;
+    font-size: 11px;
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  .opportunity .opp-icon {
+    color: var(--success);
+    flex-shrink: 0;
+    font-size: 12px;
+  }
+
+  .kpi-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 6px;
+    margin: 2px 4px 2px 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+  .kpi-badge .kpi-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  .state-callout {
+    background: rgba(245,166,35,0.08);
+    border: 1px dashed rgba(245,166,35,0.3);
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-size: 11px;
+    margin-bottom: 6px;
+    color: var(--accent);
+  }
+  .state-callout .state-label {
+    font-weight: 600;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+    display: block;
+  }
+
+  .connector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    font-size: 14px;
+    padding: 2px 0;
+  }
+
+  .persona-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 10px;
+    margin: 2px;
+  }
+  .persona-new { background: rgba(255,107,74,0.15); color: var(--sweat); }
+  .persona-active { background: rgba(52,211,153,0.15); color: var(--success); }
+  .persona-power { background: rgba(139,92,246,0.15); color: var(--connect); }
+
+  .detail-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 200;
+  }
+  .detail-overlay.active { display: flex; align-items: center; justify-content: center; }
+  .detail-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    width: 90%;
+    max-width: 700px;
+    max-height: 80vh;
+    overflow-y: auto;
+    padding: 32px;
+  }
+  .detail-panel h2 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .detail-panel .detail-phase {
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+  }
+  .detail-panel .detail-section {
+    margin-bottom: 20px;
+  }
+  .detail-panel .detail-section h4 {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+  .detail-panel .detail-section p, .detail-panel .detail-section li {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text);
+  }
+  .detail-panel .detail-section ul {
+    list-style: none;
+    padding: 0;
+  }
+  .detail-panel .detail-section li {
+    padding: 4px 0;
+    padding-left: 16px;
+    position: relative;
+  }
+  .detail-panel .detail-section li::before {
+    content: '\2192';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+  }
+  .detail-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #444; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <h1><span>S&T</span> User Journey Map</h1>
+    <span class="header-badge">9 Flows · 50+ Screens · KYN AI</span>
+  </div>
+  <div class="header-controls">
+    <button class="filter-btn active" onclick="filterPersona('all')">All Users</button>
+    <button class="filter-btn" onclick="filterPersona('new')">New Member</button>
+    <button class="filter-btn" onclick="filterPersona('active')">Active Member</button>
+    <button class="filter-btn" onclick="filterPersona('power')">Power User</button>
+  </div>
+</div>
+
+<div class="stats-bar">
+  <div class="stat-item"><div class="stat-value">6</div><div class="stat-label">Journey Phases</div></div>
+  <div class="stat-item"><div class="stat-value">9</div><div class="stat-label">Major Flows</div></div>
+  <div class="stat-item"><div class="stat-value">50+</div><div class="stat-label">Screens</div></div>
+  <div class="stat-item"><div class="stat-value">11</div><div class="stat-label">Studio Layouts</div></div>
+  <div class="stat-item"><div class="stat-value">3</div><div class="stat-label">Pillars</div></div>
+  <div class="stat-item"><div class="stat-value">10</div><div class="stat-label">API Integrations</div></div>
+  <div class="stat-item"><div class="stat-value">5</div><div class="stat-label">Exit Points</div></div>
+  <div class="stat-item"><div class="stat-value">3</div><div class="stat-label">Hero States</div></div>
+</div>
+
+<div class="journey-container">
+<div class="journey-grid">
+
+  <div class="row-label" style="border-bottom:3px solid var(--border);"></div>
+  <div class="phase-header" style="border-color:var(--phase-activate); background:rgba(255,107,74,0.05);"><h3 style="color:var(--phase-activate);">Activate</h3><div class="phase-desc">Membership validation & account creation</div><div class="phase-flows" style="background:rgba(255,107,74,0.15); color:var(--phase-activate);">Flow 1</div></div>
+  <div class="phase-header" style="border-color:var(--phase-onboard); background:rgba(245,166,35,0.05);"><h3 style="color:var(--phase-onboard);">Onboard</h3><div class="phase-desc">Profile setup & pillar introduction</div><div class="phase-flows" style="background:rgba(245,166,35,0.15); color:var(--phase-onboard);">Flows 2, 6</div></div>
+  <div class="phase-header" style="border-color:var(--phase-engage); background:rgba(52,211,153,0.05);"><h3 style="color:var(--phase-engage);">Engage</h3><div class="phase-desc">Browse, book, and attend classes</div><div class="phase-flows" style="background:rgba(52,211,153,0.15); color:var(--phase-engage);">Flows 3, 4, 6</div></div>
+  <div class="phase-header" style="border-color:var(--phase-reflect); background:rgba(74,199,255,0.05);"><h3 style="color:var(--phase-reflect);">Reflect</h3><div class="phase-desc">Post-class feedback & weekly review</div><div class="phase-flows" style="background:rgba(74,199,255,0.15); color:var(--phase-reflect);">Flows 5, 8</div></div>
+  <div class="phase-header" style="border-color:var(--phase-optimize); background:rgba(139,92,246,0.05);"><h3 style="color:var(--phase-optimize);">Optimize</h3><div class="phase-desc">AI-driven goal alignment & scheduling</div><div class="phase-flows" style="background:rgba(139,92,246,0.15); color:var(--phase-optimize);">Flows 5, 9</div></div>
+  <div class="phase-header" style="border-color:var(--phase-retain); background:rgba(236,72,153,0.05);"><h3 style="color:var(--phase-retain);">Retain</h3><div class="phase-desc">Profile management & long-term value</div><div class="phase-flows" style="background:rgba(236,72,153,0.15); color:var(--phase-retain);">Flow 7</div></div>
+
+  <!-- TOUCHPOINTS -->
+  <div class="row-label"><span class="label-icon">📍</span> Touchpoints</div>
+  <div class="cell">
+    <div class="touchpoint" onclick="showDetail('activate-kyn')"><div class="tp-name">ActivateKYN</div><div class="tp-screen">/activateKYN</div><span class="tp-flow-tag">F1</span></div>
+    <div class="connector">↓</div>
+    <div class="touchpoint" onclick="showDetail('create-account')"><div class="tp-name">CreateAccount</div><div class="tp-screen">/createAccount</div><span class="tp-flow-tag">F1</span></div>
+    <div class="connector">↓</div>
+    <div class="touchpoint" onclick="showDetail('notif-perm')"><div class="tp-name">Notification Permission</div><div class="tp-screen">/notificationPermission</div><span class="tp-flow-tag">F1</span></div>
+    <div class="state-callout"><span class="state-label">Decision</span>Returning users → Login → Home (skip onboard)</div>
+  </div>
+  <div class="cell">
+    <div class="touchpoint" onclick="showDetail('welcome')"><div class="tp-name">Welcome & Intake</div><div class="tp-screen">/basicInfoWelcome → /intakeFormDemographics</div><span class="tp-flow-tag">F2</span></div>
+    <div class="connector">↓</div>
+    <div class="touchpoint" onclick="showDetail('onboarding-slider')"><div class="tp-name">12-Page Pillar Story</div><div class="tp-screen">/onboardingSlider (Sweat·Recover·Connect)</div><span class="tp-flow-tag">F2</span></div>
+    <div class="connector">↓</div>
+    <div class="touchpoint" onclick="showDetail('spot-onboard')"><div class="tp-name">Studio Spot Preferences</div><div class="tp-screen">/studioPreferenceHub → 11 layouts</div><span class="tp-flow-tag">F6</span></div>
+  </div>
+  <div class="cell">
+    <div class="touchpoint" onclick="showDetail('home')"><div class="tp-name">Home Dashboard</div><div class="tp-screen">/home (hero card + 3 metric cards)</div><span class="tp-flow-tag">F3</span></div>
+    <div class="connector">↓</div>
+    <div class="touchpoint" onclick="showDetail('schedule')"><div class="tp-name">Schedule & Book</div><div class="tp-screen">/schedule → /scheduleCurrentWeekBooking</div><span class="tp-flow-tag">F4</span></div>
+    <div class="connector">↓</div>
+    <div class="touchpoint" onclick="showDetail('booking-review')"><div class="tp-name">Booking Review + Spot</div><div class="tp-screen">/scheduleCurrentWeekBookingReview</div><span class="tp-flow-tag">F4·F6</span></div>
+    <div class="state-callout"><span class="state-label">State-Driven</span>Hero card CTA: post-class > weekly CI > default schedule</div>
+  </div>
+  <div class="cell">
+    <div class="touchpoint" onclick="showDetail('post-class')"><div class="tp-name">Post-Class Check-In</div><div class="tp-screen">/postClassCheckIn (RPE 1-10 + notes)</div><span class="tp-flow-tag">F8</span></div>
+    <div class="connector">↓</div>
+    <div class="touchpoint" onclick="showDetail('weekly-reflection')"><div class="tp-name">Weekly Reflection</div><div class="tp-screen">/weeklyCheckInSlider (Phase 1)</div><span class="tp-flow-tag">F5</span></div>
+    <div class="connector">↓</div>
+    <div class="touchpoint" onclick="showDetail('week-ahead')"><div class="tp-name">Week Ahead Review</div><div class="tp-screen">/weekAheadSlider (Phase 2)</div><span class="tp-flow-tag">F5</span></div>
+    <div class="state-callout"><span class="state-label">Time Window</span>Weekly check-in: Fri 9AM → Sun midnight</div>
+  </div>
+  <div class="cell">
+    <div class="touchpoint" onclick="showDetail('advanced-booking')"><div class="tp-name">Advanced Booking</div><div class="tp-screen">/weeklyAdvancedBookingSlider (Phase 3)</div><span class="tp-flow-tag">F5</span></div>
+    <div class="connector">↓</div>
+    <div class="touchpoint" onclick="showDetail('optimal-mix')"><div class="tp-name">AI Class Mix</div><div class="tp-screen">/optimalClassMixWeeklyCheckin</div><span class="tp-flow-tag">F5</span></div>
+    <div class="connector">↓</div>
+    <div class="touchpoint" onclick="showDetail('magic-flow')"><div class="tp-name">Magic Flow (Goal Align)</div><div class="tp-screen">/classesBookedModify (AI swap suggestions)</div><span class="tp-flow-tag">F9</span></div>
+  </div>
+  <div class="cell">
+    <div class="touchpoint" onclick="showDetail('profile')"><div class="tp-name">Profile Hub</div><div class="tp-screen">/profilePage (6 sections)</div><span class="tp-flow-tag">F7</span></div>
+    <div class="connector">↓</div>
+    <div class="touchpoint" onclick="showDetail('30-day')"><div class="tp-name">30-Day Snapshot</div><div class="tp-screen">/onboardingSlider (fromProfile=true)</div><span class="tp-flow-tag">F7·F2</span></div>
+    <div class="connector">↓</div>
+    <div class="touchpoint" onclick="showDetail('settings')"><div class="tp-name">Settings & Feedback</div><div class="tp-screen">/settings · /feedbackSumission</div><span class="tp-flow-tag">F7</span></div>
+  </div>
+
+  <!-- USER ACTIONS -->
+  <div class="row-label"><span class="label-icon">👆</span> User Actions</div>
+  <div class="cell"><div class="action-item">Enter S&T member email</div><div class="action-item">Consent to terms & privacy</div><div class="action-item">Create password</div><div class="action-item">Grant/skip notification permission</div></div>
+  <div class="cell"><div class="action-item">Enter height, weight, age, gender</div><div class="action-item">Select fitness goal & frequency</div><div class="action-item">Swipe through 12-page data story</div><div class="action-item">Pick favourite spots across 11 studios</div><div class="action-item">Select preferred zones per studio</div></div>
+  <div class="cell"><div class="action-item">View personalized pillar metrics</div><div class="action-item">Filter classes (type, instructor, studio)</div><div class="action-item">Select classes & assign spots</div><div class="action-item">Manage bookings (reschedule/swap/cancel)</div><div class="action-item">View priority (auto-booked) classes</div></div>
+  <div class="cell"><div class="action-item">Rate perceived exertion (RPE 1-10)</div><div class="action-item">Add optional session notes</div><div class="action-item">Review past week Sweat/Recover/Connect</div><div class="action-item">Edit upcoming classes (reschedule/swap)</div><div class="action-item">Exit early via "Remind me later"</div></div>
+  <div class="cell"><div class="action-item">Set blocked times & recurring slots</div><div class="action-item">Review AI-generated class schedule</div><div class="action-item">Accept or modify class recommendations</div><div class="action-item">Swap classes for goal-aligned alternatives</div><div class="action-item">Set spot preferences for AI schedule</div></div>
+  <div class="cell"><div class="action-item">Edit personal info (age/height/weight/goal)</div><div class="action-item">Configure dream instructor (5 sliders)</div><div class="action-item">Set music & end-of-class preferences</div><div class="action-item">View 30-day activity snapshot</div><div class="action-item">Submit feedback (Zendesk ticket)</div></div>
+
+  <!-- EMOTIONAL ARC -->
+  <div class="row-label"><span class="label-icon">💭</span> Emotional Arc</div>
+  <div class="cell"><div class="emotion-track"><div class="emotion-dot" style="background:rgba(52,211,153,0.2);">🤔</div><div><div style="font-size:12px; font-weight:600;">Cautious Optimism</div><div class="emotion-label">"Will this validate my membership?"</div></div></div><div class="emotion-track"><div class="emotion-dot" style="background:rgba(248,113,113,0.2);">😤</div><div><div style="font-size:12px; font-weight:600;">Friction Risk</div><div class="emotion-label">"Another password to remember"</div></div></div></div>
+  <div class="cell"><div class="emotion-track"><div class="emotion-dot" style="background:rgba(245,166,35,0.2);">😊</div><div><div style="font-size:12px; font-weight:600;">Delight & Discovery</div><div class="emotion-label">"My data tells a cool story!"</div></div></div><div class="emotion-track"><div class="emotion-dot" style="background:rgba(248,113,113,0.2);">😩</div><div><div style="font-size:12px; font-weight:600;">Overwhelm Risk</div><div class="emotion-label">"12 pages + 11 studios is a lot"</div></div></div></div>
+  <div class="cell"><div class="emotion-track"><div class="emotion-dot" style="background:rgba(52,211,153,0.2);">💪</div><div><div style="font-size:12px; font-weight:600;">Empowered</div><div class="emotion-label">"I can see my progress in 3 pillars"</div></div></div><div class="emotion-track"><div class="emotion-dot" style="background:rgba(52,211,153,0.2);">🎯</div><div><div style="font-size:12px; font-weight:600;">In Control</div><div class="emotion-label">"Booking with my preferred spot — nice"</div></div></div></div>
+  <div class="cell"><div class="emotion-track"><div class="emotion-dot" style="background:rgba(74,199,255,0.2);">🧘</div><div><div style="font-size:12px; font-weight:600;">Mindful</div><div class="emotion-label">"This makes me think about my week"</div></div></div><div class="emotion-track"><div class="emotion-dot" style="background:rgba(248,113,113,0.2);">⏰</div><div><div style="font-size:12px; font-weight:600;">Time Pressure</div><div class="emotion-label">"3-phase check-in on my weekend?"</div></div></div></div>
+  <div class="cell"><div class="emotion-track"><div class="emotion-dot" style="background:rgba(139,92,246,0.2);">🤖</div><div><div style="font-size:12px; font-weight:600;">AI Trust</div><div class="emotion-label">"Does KYN actually know what's best?"</div></div></div><div class="emotion-track"><div class="emotion-dot" style="background:rgba(52,211,153,0.2);">🎉</div><div><div style="font-size:12px; font-weight:600;">Aligned</div><div class="emotion-label">"My schedule matches my goals now"</div></div></div></div>
+  <div class="cell"><div class="emotion-track"><div class="emotion-dot" style="background:rgba(236,72,153,0.2);">📊</div><div><div style="font-size:12px; font-weight:600;">Self-Aware</div><div class="emotion-label">"30-day snapshot shows my patterns"</div></div></div><div class="emotion-track"><div class="emotion-dot" style="background:rgba(52,211,153,0.2);">🏡</div><div><div style="font-size:12px; font-weight:600;">At Home</div><div class="emotion-label">"I can fine-tune everything"</div></div></div></div>
+
+  <!-- PAIN POINTS -->
+  <div class="row-label"><span class="label-icon">⚠️</span> Pain Points</div>
+  <div class="cell"><div class="pain-point"><span class="pain-icon">▲</span><span>MarianaTek API latency during email validation can feel like rejection</span></div><div class="pain-point"><span class="pain-icon">▲</span><span>No SSO — manual password creation adds friction</span></div><div class="pain-point"><span class="pain-icon">▲</span><span>Notification permission prompt before showing app value</span></div></div>
+  <div class="cell"><div class="pain-point"><span class="pain-icon">▲</span><span>12-page slider is long — no skip option, no progress save</span></div><div class="pain-point"><span class="pain-icon">▲</span><span>11 studio layouts for spot preference = cognitive overload</span></div><div class="pain-point"><span class="pain-icon">▲</span><span>Height/weight unit toggle can confuse</span></div></div>
+  <div class="cell"><div class="pain-point"><span class="pain-icon">▲</span><span>Hero card state machine is invisible to users</span></div><div class="pain-point"><span class="pain-icon">▲</span><span>Filter reset on back-navigation loses selections</span></div><div class="pain-point"><span class="pain-icon">▲</span><span>Spot selection per class in multi-booking is repetitive</span></div></div>
+  <div class="cell"><div class="pain-point"><span class="pain-icon">▲</span><span>3-phase weekly check-in feels marathon-like</span></div><div class="pain-point"><span class="pain-icon">▲</span><span>Fri 9AM–Sun midnight window competes with weekends</span></div><div class="pain-point"><span class="pain-icon">▲</span><span>"Remind me later" exits lose partial progress</span></div></div>
+  <div class="cell"><div class="pain-point"><span class="pain-icon">▲</span><span>AI transparency: can't see why KYN recommends swaps</span></div><div class="pain-point"><span class="pain-icon">▲</span><span>Goal alignment score without benchmarking feels abstract</span></div><div class="pain-point"><span class="pain-icon">▲</span><span>Multiple API calls create loading states during swaps</span></div></div>
+  <div class="cell"><div class="pain-point"><span class="pain-icon">▲</span><span>Dream instructor: 5 bipolar sliders feel abstract</span></div><div class="pain-point"><span class="pain-icon">▲</span><span>Delete account is irreversible with no cool-off</span></div><div class="pain-point"><span class="pain-icon">▲</span><span>No way to export or share fitness data</span></div></div>
+
+  <!-- OPPORTUNITIES -->
+  <div class="row-label"><span class="label-icon">💡</span> Opportunities</div>
+  <div class="cell"><div class="opportunity"><span class="opp-icon">★</span><span>Social proof: "Join 2,400 S&T members using KYN"</span></div><div class="opportunity"><span class="opp-icon">★</span><span>Progress animation during MT validation</span></div><div class="opportunity"><span class="opp-icon">★</span><span>Defer notification permission until first class booked</span></div></div>
+  <div class="cell"><div class="opportunity"><span class="opp-icon">★</span><span>Progressive onboarding: 3 key slides, unlock rest later</span></div><div class="opportunity"><span class="opp-icon">★</span><span>Auto-suggest spots based on popularity per class type</span></div><div class="opportunity"><span class="opp-icon">★</span><span>Gamify: "Your fitness profile is 80% complete"</span></div></div>
+  <div class="cell"><div class="opportunity"><span class="opp-icon">★</span><span>"Why this CTA" tooltip on hero card changes</span></div><div class="opportunity"><span class="opp-icon">★</span><span>Smart spot defaults: remember last-used per studio</span></div><div class="opportunity"><span class="opp-icon">★</span><span>Batch: "Use my preferred spots for all"</span></div></div>
+  <div class="cell"><div class="opportunity"><span class="opp-icon">★</span><span>Micro check-in: 1-tap RPE from push notification</span></div><div class="opportunity"><span class="opp-icon">★</span><span>Save partial weekly check-in progress</span></div><div class="opportunity"><span class="opp-icon">★</span><span>Flexible: "Start anytime, complete by Monday"</span></div></div>
+  <div class="cell"><div class="opportunity"><span class="opp-icon">★</span><span>"Because your goal is X" reasoning on every swap</span></div><div class="opportunity"><span class="opp-icon">★</span><span>Trend graph: alignment score over 4+ weeks</span></div><div class="opportunity"><span class="opp-icon">★</span><span>AI aggressiveness slider: more/fewer changes</span></div></div>
+  <div class="cell"><div class="opportunity"><span class="opp-icon">★</span><span>Instructor matching: "Based on sliders, try {name}"</span></div><div class="opportunity"><span class="opp-icon">★</span><span>Shareable fitness badges / milestones</span></div><div class="opportunity"><span class="opp-icon">★</span><span>Apple Health integration for pillar data</span></div></div>
+
+  <!-- BACKEND -->
+  <div class="row-label"><span class="label-icon">⚙️</span> Backend / APIs</div>
+  <div class="cell"><div class="kpi-badge"><span class="kpi-dot" style="background:var(--sweat);"></span> CheckIfMTUserCall</div><div class="kpi-badge"><span class="kpi-dot" style="background:var(--recover);"></span> createClientProfileCall</div><div class="kpi-badge"><span class="kpi-dot" style="background:var(--connect);"></span> Firebase Auth</div><div class="kpi-badge"><span class="kpi-dot" style="background:var(--accent);"></span> FCM Registration</div></div>
+  <div class="cell"><div class="kpi-badge"><span class="kpi-dot" style="background:var(--phase-onboard);"></span> Firestore Profile Update</div><div class="kpi-badge"><span class="kpi-dot" style="background:var(--phase-onboard);"></span> OnboardingStatus Flags</div><div class="kpi-badge"><span class="kpi-dot" style="background:var(--phase-onboard);"></span> spotPreference Write</div></div>
+  <div class="cell"><div class="kpi-badge"><span class="kpi-dot" style="background:var(--phase-engage);"></span> getWeeklyPlanWithAttendanceCall</div><div class="kpi-badge"><span class="kpi-dot" style="background:var(--phase-engage);"></span> getAvailableSpotsCall</div><div class="kpi-badge"><span class="kpi-dot" style="background:var(--phase-engage);"></span> getRescheduleOptionsCall</div><div class="kpi-badge"><span class="kpi-dot" style="background:var(--phase-engage);"></span> changeSpotCall</div></div>
+  <div class="cell"><div class="kpi-badge"><span class="kpi-dot" style="background:var(--phase-reflect);"></span> updateSessionFeedback</div><div class="kpi-badge"><span class="kpi-dot" style="background:var(--phase-reflect);"></span> createClassmixAndWeeklyPlanCall</div><div class="kpi-badge"><span class="kpi-dot" style="background:var(--phase-reflect);"></span> getRescheduleOptionsCall (×3)</div></div>
+  <div class="cell"><div class="kpi-badge"><span class="kpi-dot" style="background:var(--phase-optimize);"></span> generateScheduleFromClassMixNoAiCall</div><div class="kpi-badge"><span class="kpi-dot" style="background:var(--phase-optimize);"></span> getWeeklyPlanDocumentCall</div><div class="kpi-badge"><span class="kpi-dot" style="background:var(--phase-optimize);"></span> GoalAlignSuggestionsView</div></div>
+  <div class="cell"><div class="kpi-badge"><span class="kpi-dot" style="background:var(--phase-retain);"></span> Firestore ClientProfile CRUD</div><div class="kpi-badge"><span class="kpi-dot" style="background:var(--phase-retain);"></span> createZendeskTicketCall</div><div class="kpi-badge"><span class="kpi-dot" style="background:var(--phase-retain);"></span> DELETEAccountCall</div></div>
+
+  <!-- PERSONAS -->
+  <div class="row-label"><span class="label-icon">👤</span> Personas</div>
+  <div class="cell"><span class="persona-tag persona-new">NEW MEMBER</span><div style="font-size:11px; color:var(--text-muted); margin-top:6px;">All new members pass through exactly once</div></div>
+  <div class="cell"><span class="persona-tag persona-new">NEW MEMBER</span><div style="font-size:11px; color:var(--text-muted); margin-top:6px;">First-time onboarding</div><span class="persona-tag persona-active" style="margin-top:4px;">ACTIVE MEMBER</span><div style="font-size:11px; color:var(--text-muted); margin-top:2px;">Re-entry via 30-Day Snapshot</div></div>
+  <div class="cell"><span class="persona-tag persona-new">NEW MEMBER</span><span class="persona-tag persona-active">ACTIVE MEMBER</span><span class="persona-tag persona-power">POWER USER</span><div style="font-size:11px; color:var(--text-muted); margin-top:6px;">Core loop — daily/weekly engagement</div></div>
+  <div class="cell"><span class="persona-tag persona-active">ACTIVE MEMBER</span><span class="persona-tag persona-power">POWER USER</span><div style="font-size:11px; color:var(--text-muted); margin-top:6px;">Post-class + Fri–Sun weekly CI</div></div>
+  <div class="cell"><span class="persona-tag persona-power">POWER USER</span><div style="font-size:11px; color:var(--text-muted); margin-top:6px;">AI optimization requires commitment</div></div>
+  <div class="cell"><span class="persona-tag persona-new">NEW MEMBER</span><span class="persona-tag persona-active">ACTIVE MEMBER</span><span class="persona-tag persona-power">POWER USER</span><div style="font-size:11px; color:var(--text-muted); margin-top:6px;">All users — varies by depth</div></div>
+
+</div>
+</div>
+
+<div class="detail-overlay" id="detailOverlay" onclick="if(event.target===this)closeDetail()">
+  <div class="detail-panel" style="position:relative;">
+    <button class="detail-close" onclick="closeDetail()">✕</button>
+    <div id="detailContent"></div>
+  </div>
+</div>
+
+<script>
+const details={"activate-kyn":{title:"ActivateKYN",phase:"Activate",phaseColor:"var(--phase-activate)",flow:"Flow 1: Authentication",screen:"/activateKYN",description:"Entry gate \u2014 validates S&T membership via MarianaTek API before allowing account creation.",inputs:["Email address","Consent checkbox (Terms & Privacy)"],outputs:["email, firstName, lastName \u2192 passed to CreateAccount"],decisions:["Is user a valid S&T member? (MT API check)","New user \u2192 CreateAccount vs Existing \u2192 Login"],errors:["\"Email not found\" dialog if not in MarianaTek"],apis:["CheckIfMTUserCall (MarianaTek)"]},"create-account":{title:"CreateAccount",phase:"Activate",phaseColor:"var(--phase-activate)",flow:"Flow 1: Authentication",screen:"/createAccount",description:"Firebase account registration with pre-filled name from MarianaTek lookup.",inputs:["First name (prefilled)","Last name (prefilled)","Password","Confirm password"],outputs:["Firebase UsersRecord","Client profile in backend"],decisions:["Password validation & match check"],errors:["Password mismatch \u2192 inline error","Profile creation failure \u2192 error dialog"],apis:["Firebase createAccountWithEmail","createClientProfileCall","setAppsflyerUserIdentity"]},"notif-perm":{title:"Notification Permission",phase:"Activate",phaseColor:"var(--phase-activate)",flow:"Flow 1: Authentication",screen:"/notificationPermission",description:"Push notification opt-in with 3 benefit cards. Both paths continue to onboarding.",inputs:["System permission dialog response"],outputs:["FCM token registered (if granted)"],decisions:["Grant notifications \u2192 register token","Maybe Later \u2192 skip, still proceed"],errors:["Permission denied \u2192 error dialog, still navigates forward"],apis:["requestPermission","getFcmToken","notificationRegistrationCall"]},welcome:{title:"Welcome & Intake Form",phase:"Onboard",phaseColor:"var(--phase-onboard)",flow:"Flow 2: Onboarding & Intake",screen:"/basicInfoWelcome \u2192 /intakeFormDemographics",description:"Two-stage intake: welcome greeting with KYN AI intro, then demographics collection across 2 views.",inputs:["Height (cm/ft)","Weight (kg/lb)","Age (1-100)","Gender","Name","Fitness goal","Workout frequency","Activity level"],outputs:["ClientProfileRecord populated","OnboardingStatus.demographic_info_completed"],decisions:["Height unit: cm vs ft/in","Weight unit: kg vs lb"],errors:["Validation on required fields"],apis:["Firestore ClientProfileRecord update"]},"onboarding-slider":{title:"12-Page Pillar Story",phase:"Onboard",phaseColor:"var(--phase-onboard)",flow:"Flow 2: Onboarding & Intake",screen:"/onboardingSlider",description:"Interactive data narrative: SWEAT (5 pages), RECOVER (3 pages), CONNECT (4 pages).",inputs:["Swipe/arrow navigation between pages"],outputs:["OnboardingStatus.history_pillars_viewed"],decisions:["fromProfile flag determines exit destination"],errors:[],apis:["AppsFlyer: \"ONBOARDING Started\""]},"spot-onboard":{title:"Studio Spot Preferences (Onboarding)",phase:"Onboard",phaseColor:"var(--phase-onboard)",flow:"Flow 6: Spot & Zone Selection (Use Case 1)",screen:"/studioPreferenceHub \u2192 11 Studio Layouts",description:"Preference Mode \u2014 set favourite spots and zones across all 11 studios.",inputs:["Tap spot on grid","Select zone after spot selection"],outputs:["spotPreference.preferredSpotsByLayout saved to Firestore"],decisions:["Which studio to configure","Spot \u2192 Zone selection flow"],errors:["Firestore save failure \u2192 dialog"],apis:["Firestore spotPreference write"]},home:{title:"Home Dashboard",phase:"Engage",phaseColor:"var(--phase-engage)",flow:"Flow 3: Home Screen",screen:"/home",description:"Primary dashboard with state-driven hero card, 3 pillar metrics, upcoming classes.",inputs:["Hero card tap","Metric card taps","Upcoming class tap"],outputs:["Context-dependent navigation based on hero card state"],decisions:["Hero priority: Post-class (1) > Weekly CI (2) > Schedule (3)"],errors:[],apis:["getWeeklyPlanWithAttendanceCall"]},schedule:{title:"Schedule & Book a Class",phase:"Engage",phaseColor:"var(--phase-engage)",flow:"Flow 4: Schedule & Booking",screen:"/schedule \u2192 /scheduleCurrentWeekBooking",description:"Browse available classes with filters, book sessions with spot selection.",inputs:["Day selector","Filters","Class SELECT","REVIEW SELECTION"],outputs:["Class bookings confirmed","Spot assignments saved"],decisions:["Book new vs manage existing","Filter by type/instructor/studio/time"],errors:["Booking failure \u2192 error dialog"],apis:["getWeeklyPlanWithAttendanceCall","getAvailableSpotsCall","getRescheduleOptionsCall"]},"booking-review":{title:"Booking Review + Spot Selection",phase:"Engage",phaseColor:"var(--phase-engage)",flow:"Flows 4 & 6",screen:"/scheduleCurrentWeekBookingReview",description:"Review selected classes, assign spots per class via Flow 6.",inputs:["CHANGE spot per class","CONFIRM BOOKING"],outputs:["Bookings created with spots"],decisions:["Change spot or keep preferred"],errors:["Booking failure \u2192 stay on page"],apis:["getAvailableSpotsCall (per class)"]},"post-class":{title:"Post-Class Check-In",phase:"Reflect",phaseColor:"var(--phase-reflect)",flow:"Flow 8: Post-Class Check-In",screen:"/postClassCheckIn",description:"RPE slider (1-10) and optional notes after class completion.",inputs:["Perceived Exertion slider (1-10)","Optional notes"],outputs:["Session feedback recorded","Hero card resets"],decisions:["Rate exertion (required)","Add notes (optional)"],errors:["API failure \u2192 error state"],apis:["updateSessionFeedbackInCache"]},"weekly-reflection":{title:"Weekly Check-In: Reflection (Phase 1)",phase:"Reflect",phaseColor:"var(--phase-reflect)",flow:"Flow 5: Weekly Check-In",screen:"/weeklyCheckInSlider",description:"Multi-page reflection on past week across Sweat/Recover/Connect.",inputs:["Swipe through reflection pages"],outputs:["Phase 1 complete","Triggers class mix generation"],decisions:["GET STARTED vs REMIND ME LATER"],errors:["API failure \u2192 SnackBar"],apis:["createClassmixAndWeeklyPlanCall"]},"week-ahead":{title:"Week Ahead Review (Phase 2)",phase:"Reflect",phaseColor:"var(--phase-reflect)",flow:"Flow 5: Weekly Check-In",screen:"/weekAheadSlider",description:"Review and modify booked classes for coming week.",inputs:["Per-class edit actions","GOT IT to proceed"],outputs:["Updated bookings"],decisions:["5 edit options per class"],errors:["Reschedule/swap API failures"],apis:["getRescheduleOptionsCall (3 types)"]},"advanced-booking":{title:"Advanced Booking (Phase 3)",phase:"Optimize",phaseColor:"var(--phase-optimize)",flow:"Flow 5: Weekly Check-In",screen:"/weeklyAdvancedBookingSlider",description:"Set week 3 preferences: blocked times, recurring slots, class type preferences.",inputs:["Blocked time slots","Recurring commitments","Class preferences"],outputs:["AI-generated schedule for week 3"],decisions:["LET'S DO IT vs REMIND ME LATER"],errors:["Schedule generation failure"],apis:["generateScheduleFromClassMixNoAiCall"]},"optimal-mix":{title:"AI Optimal Class Mix",phase:"Optimize",phaseColor:"var(--phase-optimize)",flow:"Flow 5: Weekly Check-In",screen:"/optimalClassMixWeeklyCheckin",description:"AI-optimized class schedule. Edit classes, set spots, or skip.",inputs:["ClassEditOptions per class"],outputs:["Optimized schedule committed"],decisions:["Skip \u2192 Home","Set spots \u2192 StudioPreferenceHub","Complete \u2192 Home"],errors:["Class edit failures"],apis:["getWeeklyPlanDocumentCall"]},"magic-flow":{title:"Magic Flow: Goal Alignment",phase:"Optimize",phaseColor:"var(--phase-optimize)",flow:"Flow 9: Magic Flow",screen:"/classesBookedKYNIntro \u2192 /classesBooked \u2192 /classesBookedModify",description:"3-step AI goal alignment with swap recommendations.",inputs:["NEXT through screens","SWAP or KEEP per recommendation"],outputs:["Goal-aligned schedule"],decisions:["View analysis or skip","Accept or modify AI recommendations"],errors:["Swap API failures"],apis:["GoalAlignSuggestionsViewStruct","Swap booking APIs"]},profile:{title:"Profile Hub",phase:"Retain",phaseColor:"var(--phase-retain)",flow:"Flow 7: Profile & Settings",screen:"/profilePage",description:"Central hub: Personal Info, Preferences, Spots & Zones, Settings, Feedback, 30-Day Snapshot.",inputs:["Section navigation taps"],outputs:["Routes to 6 sub-flows"],decisions:["Which section to visit"],errors:[],apis:["Firestore ClientProfileRecord read"]},"30-day":{title:"30-Day Snapshot",phase:"Retain",phaseColor:"var(--phase-retain)",flow:"Flows 7 & 2",screen:"/onboardingSlider (fromProfile=true)",description:"Re-uses onboarding slider with updated 30-day data. Exits to PreSchedulingIntro.",inputs:["Swipe through 12 pages"],outputs:["Updated activity awareness"],decisions:["fromProfile=true changes exit destination"],errors:[],apis:["Same as onboarding slider"]},settings:{title:"Settings & Feedback",phase:"Retain",phaseColor:"var(--phase-retain)",flow:"Flow 7: Profile & Settings",screen:"/settings \u00b7 /feedbackSumission",description:"Account management and Zendesk feedback with optional photo.",inputs:["Change/reset password","Toggle notifications","Feedback (subject + desc + photo)","Delete account"],outputs:["Password changed","Zendesk ticket","Account deleted"],decisions:["Change vs reset password","Delete (irreversible)","Log out"],errors:["Password failure \u2192 error","Zendesk failure \u2192 FailurePopup"],apis:["changeUserPassword","createZendeskTicketCall","DELETEAccountCall"]}};
+
+function showDetail(key){const d=details[key];if(!d)return;document.getElementById('detailContent').innerHTML=`<h2>${d.title}</h2><div class="detail-phase" style="color:${d.phaseColor};">${d.phase} Phase \u00b7 ${d.flow}</div><div class="detail-section"><h4>Screen</h4><p style="font-family:monospace; font-size:12px; color:var(--accent);">${d.screen}</p></div><div class="detail-section"><h4>Description</h4><p>${d.description}</p></div><div class="detail-section"><h4>User Inputs</h4><ul>${d.inputs.map(i=>`<li>${i}</li>`).join('')}</ul></div><div class="detail-section"><h4>Outputs & Transitions</h4><ul>${d.outputs.map(o=>`<li>${o}</li>`).join('')}</ul></div><div class="detail-section"><h4>Decision Points</h4><ul>${d.decisions.map(x=>`<li>${x}</li>`).join('')}</ul></div>${d.errors.length?`<div class="detail-section"><h4>Error States</h4><ul>${d.errors.map(e=>`<li>${e}</li>`).join('')}</ul></div>`:''}<div class="detail-section"><h4>APIs & Backend</h4><ul>${d.apis.map(a=>`<li>${a}</li>`).join('')}</ul></div>`;document.getElementById('detailOverlay').classList.add('active');}
+function closeDetail(){document.getElementById('detailOverlay').classList.remove('active');}
+function filterPersona(type){document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));event.target.classList.add('active');document.querySelectorAll('.persona-tag').forEach(tag=>{tag.style.opacity=type==='all'?'1':tag.classList.contains('persona-'+type)?'1':'0.2';});}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDetail();});
+</script>
+</body>
+</html>
